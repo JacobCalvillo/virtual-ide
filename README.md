@@ -1,73 +1,128 @@
-# React + TypeScript + Vite
+# Virtual IDE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A code editor that runs entirely in the browser, built as a learning project with React and TypeScript.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **TypeScript**
+- **Vite** as bundler and dev server
+- **Monaco Editor** (`@monaco-editor/react`) for the code editor
+- **localStorage** for filesystem persistence
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Recursive file tree** — supports infinitely nested folders
+- **Create files and folders** from the Sidebar
+- **Code editor** with TypeScript syntax highlighting via Monaco
+- **Open file tabs** VS Code style
+- **Auto persistence** — the file tree is saved to localStorage on every edit
+- **Delete files and folders** from the tree
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 18+
+- npm
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Clone the repository
+git clone <project-url>
+cd virtual-ide
+
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Build for production
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+## Architecture
+
+```
+src/
+├── components/
+│   ├── Sidebar.tsx        # Recursive file tree + node creation
+│   ├── Editor.tsx         # Monaco Editor with syntax highlighting
+│   └── Tabs.tsx           # Open file tabs
+├── hooks/
+│   └── useFileSystem.ts   # Filesystem logic encapsulated
+├── types/
+│   └── filesystem.types.ts
+├── utils/
+│   └── utils.ts           # Pure tree transformation functions
+└── App.tsx
+```
+
+## Data Model
+
+```typescript
+type FileNode = {
+    type: "file"
+    name: string
+    content: string
+}
+
+type FolderNode = {
+    type: "folder"
+    name: string
+    children: (FileNode | FolderNode)[]
+}
+
+type FileSystemNode = FileNode | FolderNode
+
+type AppState = {
+    tree: FileSystemNode        // full file tree
+    selectedFileName: string | null
+    openFilesNames: string[]
+}
+```
+
+## Contributing
+
+Contributions are welcome! Here's how to get started:
+
+### Fork & Pull Request Workflow
+
+1. Fork the repository
+2. Create a new branch for your feature or fix:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Make your changes and commit them:
+   ```bash
+   git commit -m "[feat]: add your feature description"
+   ```
+4. Push to your fork:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. Open a Pull Request describing your changes
+
+### Code Style Guidelines
+
+- Use **TypeScript** strictly — avoid `any` and type assertions (`as`)
+- Keep components focused on a **single responsibility**
+- Place business logic in hooks or `utils/`, not in components
+- Use **pure functions** for tree transformations
+- Follow the existing folder structure
+
+### Reporting Bugs
+
+If you find a bug, please open an issue including:
+- A clear description of the problem
+- Steps to reproduce it
+- Expected vs actual behavior
+- Browser and OS version
+
+### Open Issues / Good First Issues
+
+Check the [Roadmap](#roadmap) section for features that still need to be implemented. Any of those are great starting points for contributions.

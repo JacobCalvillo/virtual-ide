@@ -34,7 +34,6 @@ export default function App() {
                     onContentChange={handleOnContentChange}
                 />
             </div>
-
         </div>
     )
 }

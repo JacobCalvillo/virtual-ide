@@ -1,0 +1,59 @@
+:root {
+  --primary-bg-color: rgba(16, 13, 14, 0.8);
+  --selected-active-hover: rgba(51, 50, 51, 0.8);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background-color: var(--primary-bg-color);
+  color: white;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  color: white;
+  border: 2px solid var(--selected-active-hover);
+}
+
+.file-item {
+  padding: 1px;
+  cursor: pointer;
+}
+
+.file-item:hover {
+  background-color: var(--selected-active-hover);
+}
+
+.file-item.active {
+  background-color:  var(--selected-active-hover);
+}
+
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  flex: content;
+}
+
+.tabs {
+  display: flex;
+}
+
+.tab {
+  margin: 2px 2px;
+}
+
+.tab.active {
+  background-color: var(--selected-active-hover);
+  border-top: 2px solid blue;
+}

@@ -1,8 +1,10 @@
 :root {
   --primary-bg-color: rgba(16, 13, 14, 0.8);
+  --secondary-bg-color: rgba(55, 49, 55, 0.8);
   --selected-active-hover: rgba(51, 50, 51, 0.8);
   --hover-buttons: rgba(84, 82, 84, 0.8);
-  --border-radius: 5px
+  --border-radius: 5px;
+  --font-family: "JetBrains Mono", monospace;
 }
 
 html,
@@ -12,7 +14,7 @@ body,
   margin: 0;
   background-color: var(--primary-bg-color);
   color: white;
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-family)
 }
 
 .app-container {
@@ -75,4 +77,16 @@ body,
 .tab.active {
   background-color: var(--selected-active-hover);
   border-top: 2px solid blue;
+}
+
+.button {
+  background-color: var(--secondary-bg-color);
+  color: white;
+  border-radius: var(--border-radius);
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--hover-buttons);
 }

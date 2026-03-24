@@ -8,27 +8,44 @@ interface SidebarProps {
     selectedFile: FileNode | null
 }
 
-function FileTreeNode({ tree, onFileSelect, onNewNode, selectedFile }: SidebarProps) {
+interface FileTreeNodeProps {
+    tree: FileSystemNode
+    onFileSelect: (file: FileNode) => void
+    onNewNode: (node: FileSystemNode) => void
+    selectedFile: FileNode | null
+    depth: number
+}
+
+function FileTreeNode({ tree, onFileSelect, onNewNode, selectedFile, depth = 0 }: FileTreeNodeProps) {
+
+    const [isOpen, setIsOpen] = useState<boolean>(true)
+
     if (tree.type === "file") {
         return (
-            <div onClick={() => onFileSelect(tree)} className={`file-item ${selectedFile?.name === tree.name ? "active" : ""}`} >
+            <div
+                style={{ paddingLeft: depth * 16 }}
+                onClick={() => onFileSelect(tree)}
+                className={`file-item ${selectedFile?.name === tree.name ? "active" : ""}`} >
                 {tree.name}
             </div>
         )
     }
-    
+
     if (tree.type === "folder") {
         return (
-            <div>
-                <span>{tree.name}</span>
+            <div style={{ paddingLeft: depth * 16 }}>
+                <span onClick={() => setIsOpen(!isOpen)}>
+                    {isOpen ? "▼" : "▶"} {tree.name}
+                </span>
                 {
-                    tree.children.map((child) => (
+                    isOpen && tree.children.map((child) => (
                         <FileTreeNode
                             selectedFile={selectedFile}
                             key={child.name}
                             tree={child}
                             onFileSelect={onFileSelect}
                             onNewNode={onNewNode}
+                            depth={depth + 1}
                         />
                     ))
                 }
@@ -44,8 +61,12 @@ export default function Sidebar({ tree, onFileSelect, onNewNode, selectedFile }:
     return (
         <div className="sidebar">
             <div>
-                <button onClick={() => setIsCreating("file")}>New File</button>
-                <button onClick={() => setIsCreating("folder")}>New Folder</button>
+                <button 
+                    className="button"
+                    onClick={() => setIsCreating("file")}>New File</button>
+                <button 
+                    className="button"
+                    onClick={() => setIsCreating("folder")}>New Folder</button>
             </div>
             <div>
                 <FileTreeNode
@@ -53,6 +74,7 @@ export default function Sidebar({ tree, onFileSelect, onNewNode, selectedFile }:
                     tree={tree}
                     onFileSelect={onFileSelect}
                     onNewNode={onNewNode}
+                    depth={0}
                 />
                 {isCreating !== null && (
                     <input

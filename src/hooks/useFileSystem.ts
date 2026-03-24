@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { AppState, FileNode, FileSystemNode } from "../types/filesystem.types"
-import { updateFileContent, addNodeToTree, removeNodeToTree } from "../utils/utils"
+import { updateFileContent, addNodeToTree, removeNodeToTree, findFileByName } from "../utils/utils"
 import { useEffect } from "react"
 
 export function useFileSystem() {
@@ -8,33 +8,36 @@ export function useFileSystem() {
         const saved = localStorage.getItem("filesystem")
         return saved ? {
             tree: JSON.parse(saved),
-            selectedFile: null,
-            openFiles: []
+            selectedFileName: null,
+            openFilesNames: []
         } : {
             tree: { type: "folder", name: "my-project", children: [] },
-            selectedFile: null,
-            openFiles: []
+            selectedFileName: null,
+            openFilesNames: []
         }
     })
+
+    const selectedFile = findFileByName(state.tree, state.selectedFileName)
 
     useEffect(() => {
         localStorage.setItem("filesystem", JSON.stringify(state.tree))
     }, [state.tree])
 
+
     function handleFileSelect(file: FileNode) {
         setState(prev => ({
             ...prev,
-            selectedFile: file,
-            openFiles:prev.openFiles.some(f => f.name === file.name)
-            ? prev.openFiles
-            : [...prev.openFiles, file]
+            selectedFileName: file?.name,
+            openFilesNames: prev.openFilesNames.some(name => name === file.name)
+                ? prev.openFilesNames
+                : [...prev.openFilesNames, file.name]
         }))
     }
 
     function handleOnContentChange(content: string | undefined) {
-        if (!content || !state.selectedFile) return
+        if (!state.selectedFileName || content == undefined) return
 
-        const fileName = state.selectedFile.name
+        const fileName = state.selectedFileName
 
         setState(prev => ({
             ...prev,
@@ -48,12 +51,12 @@ export function useFileSystem() {
             tree: addNodeToTree(prev.tree, node)
         }))
     }
-    
+
     function handleCloseFile(file: FileNode) {
         setState(prev => ({
             ...prev,
-            openFiles: prev.openFiles.filter(f => f.name !== file.name),
-            selectedFile: prev.selectedFile?.name === file.name ? null : prev.selectedFile
+            openFilesNames: prev.openFilesNames.filter(f => f !== file.name),
+            selectedFileName: prev.selectedFileName === file.name ? null : prev.selectedFileName
         }))
     }
 
@@ -61,10 +64,14 @@ export function useFileSystem() {
         setState(prev => ({
             ...prev,
             tree: removeNodeToTree(prev.tree, node),
-            openFiles: prev.openFiles.filter(file => file.name !== node.name),
-            selectedFile:  prev.selectedFile?.name === node.name ? null : prev.selectedFile
+            openFilesNames: prev.openFilesNames.filter(file => file !== node.name),
+            selectedFileName: prev.selectedFileName === node.name ? null : prev.selectedFileName
         }))
     }
+
+    const openFiles = state.openFilesNames
+        .map(name => findFileByName(state.tree, name))
+        .filter((file): file is FileNode => file !== null)
 
     return {
         handleFileSelect,
@@ -72,6 +79,8 @@ export function useFileSystem() {
         handleOnContentChange,
         handleCloseFile,
         handleRemoveNode,
+        selectedFile,
+        openFiles,
         state
     }
 }

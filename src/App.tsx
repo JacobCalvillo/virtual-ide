@@ -10,25 +10,27 @@ export default function App() {
         handleNewNode,
         handleOnContentChange,
         handleCloseFile,
+        selectedFile,
+        openFiles
     } = useFileSystem()
 
     return (
         <div className="app-container">
             <Sidebar
-                selectedFile={state.selectedFile}
+                selectedFile={selectedFile}
                 onNewNode={handleNewNode}
                 tree={state.tree}
                 onFileSelect={handleFileSelect}
             />
             <div className="editor-container">
                 <Tabs 
-                    openFiles={state.openFiles}
-                    selectedFile={state.selectedFile}
+                    openFiles={openFiles}
+                    selectedFile={selectedFile}
                     onFileSelect={handleFileSelect}
                     onClose={handleCloseFile}
                 />
                 <Editor
-                    selectedFile={state.selectedFile}
+                    selectedFile={selectedFile}
                     onContentChange={handleOnContentChange}
                 />
             </div>

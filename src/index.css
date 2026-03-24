@@ -1,6 +1,8 @@
 :root {
   --primary-bg-color: rgba(16, 13, 14, 0.8);
   --selected-active-hover: rgba(51, 50, 51, 0.8);
+  --hover-buttons: rgba(84, 82, 84, 0.8);
+  --border-radius: 5px
 }
 
 html,
@@ -50,7 +52,24 @@ body,
 }
 
 .tab {
-  margin: 2px 2px;
+  padding: 5px 8px;
+  font-size: small;
+}
+
+.tab:hover {
+  background-color: var(--selected-active-hover);
+}
+
+.tab > button {
+  color: white;
+  background-color: inherit;
+  border: none;
+  margin-left: 4px;
+  border-radius: var(--border-radius);
+}
+
+.tab > button:hover {
+  background-color: var(--hover-buttons);
 }
 
 .tab.active {

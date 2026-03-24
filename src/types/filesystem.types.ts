@@ -15,7 +15,7 @@ export type FileSystemNode = FileNode | FolderNode;
 
 export type AppState = {
     tree: FileSystemNode
-    selectedFile: null | FileNode
-    openFiles: FileNode[]
+    selectedFileName: string | null
+    openFilesNames: string[]
 }
 

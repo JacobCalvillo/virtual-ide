@@ -1,4 +1,4 @@
-import type { FileSystemNode } from "../types/filesystem.types"
+import type { FileNode, FileSystemNode } from "../types/filesystem.types"
 
 export function updateFileContent(tree: FileSystemNode, fileName: string, newContent: string): FileSystemNode {
     if (tree.type == "file") {
@@ -31,3 +31,19 @@ export function removeNodeToTree(tree: FileSystemNode, node: FileSystemNode) : F
 
     return tree
 }
+
+export function findFileByName(tree: FileSystemNode, name: string | null) : FileNode | null {
+    if(!name) return null
+
+    if (tree.type === "file") {
+        return tree.name === name ? tree : null
+    }
+
+    for (const child of tree.children) {
+        const found = findFileByName(child, name)
+
+        if (found) return found
+    }
+    return null
+}
+
